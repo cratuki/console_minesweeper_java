@@ -8,12 +8,11 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
 
-// p129 proposes a text based game of minecraft. first thought goes to
-// interface. I could make it scrolly. Or, I could try to get the slashie
-// library working. Wouldn't hurt to have a quick shot at that.
-//
-// Slashie library doesn't work. Going to plain text. OK. Got a cls working.
 
+/**
+ * Contains static methods for outputting to console, and for getting user
+ * input (line by line, it does not support anything like curses raw mode).
+ */
 class Terminal {
     private static Scanner scanner;
 
@@ -77,6 +76,9 @@ class Terminal {
 }
 
 
+/**
+ * Represents a location on the game grid.
+ */
 class Coord {
     int s;
     int e;
@@ -100,6 +102,10 @@ class Coord {
 }
 
 
+/**
+ * Each time the menu launches the game, we get a fresh instance of this
+ * class.
+ */
 class Game {
     // SQ square type
     private static final byte SQ_BOMB_LIVE    = (byte) 0xff;      // An unmarked bomb square
@@ -595,6 +601,9 @@ class Game {
 }
 
 
+/**
+ * This runs a menu and coordinates launch of the game.
+ */
 class Engine {
     Engine() {
 
