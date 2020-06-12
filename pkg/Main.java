@@ -112,7 +112,7 @@ class Game {
     private static final byte SQ_BOMB_EXPLODED= (byte) 0xfe;      // An exploded bomb
     private static final byte SQ_BOMB_MARKED  = (byte) 0xfd;      // A correctly marked bomb
     private static final byte SQ_QMARK        = (byte) 0xfc;      // Final screen shows ? for bad marks
-    private static final byte SQ_BOMB_DEFUSED = (byte) 0xfb;      // Final screen shows d for bad marks
+    private static final byte SQ_BOMB_DEFUSED = (byte) 0xfb;      // Final screen shows d for correct marks
     private static final byte SQ_BAD_8        = (byte) 0x38;      // BAD: Safe spaces, incorrectly marked
     private static final byte SQ_BAD_7        = (byte) 0x37;      // .
     private static final byte SQ_BAD_6        = (byte) 0x36;      // .
