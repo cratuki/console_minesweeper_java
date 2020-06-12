@@ -594,10 +594,6 @@ class Game {
             }
         }
     }
-
-    public void revealAll(byte[][] grid) {
-        
-    }
 }
 
 
@@ -605,9 +601,7 @@ class Game {
  * This runs a menu and coordinates launch of the game.
  */
 class Engine {
-    Engine() {
-
-    }
+    Engine() {}
 
     void go() throws Exception {
         while (1==1) {
@@ -630,7 +624,6 @@ class Engine {
 
 
 public class Main {
-
     public static void main(String args[]) {
         Terminal.open();
         try {
