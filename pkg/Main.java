@@ -58,6 +58,18 @@ class Terminal {
         Terminal.scanner.close();
     }
 
+    public static void gameOver(String[] lines, boolean b_explosion) {
+        Terminal.cls();
+        Terminal.printStringArr(lines);
+
+        if (b_explosion) {
+            Terminal.prompt("FAILURE. Type OK to continue.");
+        }
+        else {
+            Terminal.prompt("VICTORY! Type OK to continue.");
+        }
+    }
+
     public static String gameInteraction(String[] lines) {
         Terminal.cls();
         Terminal.printStringArr(lines);
@@ -218,17 +230,19 @@ class Game {
 
         String message = "";
 
+        boolean b_explosion = false;
+
         while (1==1) {
             if (this.gameState == GS_DONE) {
                 String[] lines = new String[height+2];
 
                 // Convert all non-visible states into visible states.
                 for (int s=0; s<height; s++) {
-                    StringBuilder sb = new StringBuilder();
                     for (int e=0; e<width; e++) {
                         byte gridByte = grid[s][e];
                         if (gridByte == SQ_BOMB_LIVE) {
                             grid[s][e] = SQ_BOMB_EXPLODED;
+                            b_explosion = true;
                         }
                         else if (gridByte == SQ_BOMB_MARKED) {
                             grid[s][e] = SQ_BOMB_DEFUSED;
@@ -266,12 +280,14 @@ class Game {
                             }
                         }
                     }
-                    sb.append(" ").append(s);
-                    lines[s] = sb.toString();
                 }
+
+                // Now we fall through from GS_DONE logic to the usual display
+                // loop, which will display the revealed map.
             }
 
-            String[] lines = new String[height+6];
+            // Render the map, legend and message fields to a StringBuilder.
+            String[] lines = new String[height+4];
             for (int s=0; s<height; s++) {
                 StringBuilder sb = new StringBuilder();
                 for (int e=0; e<width; e++) {
@@ -333,18 +349,18 @@ class Game {
                 sb.append(".").append(s);
                 lines[s] = sb.toString();
             }
-
             lines[height] = ".........";
             lines[height+1] = "abcdefghi";
             lines[height+2] = "";
             lines[height+3] = new String(message); message = "";
-            lines[height+4] = "";
 
-            String cmd = Terminal.gameInteraction(lines);
             if (gameState == GS_DONE) {
+                Terminal.gameOver(lines, b_explosion);
                 break;
             }
-            else if (cmd.equals("?")) {
+
+            String cmd = Terminal.gameInteraction(lines);
+            if (cmd.equals("?")) {
                 message = "r: reveal; m: mark; c: count. Goal: Mark or reveal all spots.";
             }
             else if (cmd.equals("c")) {
