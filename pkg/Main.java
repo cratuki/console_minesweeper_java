@@ -156,7 +156,7 @@ class Game {
 
     // GS game state
     private static final byte GS_RUNNING      = (byte) 0x00;
-    private static final byte GS_DONE         = (byte) 0x01;
+    private static final byte GS_GAME_OVER    = (byte) 0x01;
 
     private static Random random = new Random();
 
@@ -168,6 +168,80 @@ class Game {
         this.height = 9;
         this.width = 9;
         this.gameState = GS_RUNNING;
+    }
+
+    private String[] renderContextToStringArr(byte[][] grid, String message) throws Exception {
+        String[] lines = new String[height+4];
+
+        for (int s=0; s<height; s++) {
+            StringBuilder sb = new StringBuilder();
+            for (int e=0; e<width; e++) {
+                byte gridByte = grid[s][e];
+                if (gridByte == SQ_BOMB_LIVE) {
+                    sb.append("#");
+                }
+                else if (gridByte == SQ_BOMB_EXPLODED) {
+                    sb.append("!");
+                }
+                else if (gridByte == SQ_BOMB_MARKED) {
+                    sb.append("-");
+                }
+                else if (gridByte == SQ_QMARK) {
+                    sb.append("?");
+                }
+                else if (gridByte == SQ_BOMB_DEFUSED) {
+                    sb.append("d");
+                }
+                else if (SQ_BAD_0 <= gridByte && gridByte <= SQ_BAD_8) {
+                    sb.append("-");
+                }
+                else if (SQ_REV_0 <= gridByte && gridByte <= SQ_REV_8) {
+                    if (gridByte == SQ_REV_0) {
+                        sb.append(" ");
+                    }
+                    else if (gridByte == SQ_REV_1) {
+                        sb.append("1");
+                    }
+                    else if (gridByte == SQ_REV_2) {
+                        sb.append("2");
+                    }
+                    else if (gridByte == SQ_REV_3) {
+                        sb.append("3");
+                    }
+                    else if (gridByte == SQ_REV_4) {
+                        sb.append("4");
+                    }
+                    else if (gridByte == SQ_REV_5) {
+                        sb.append("5");
+                    }
+                    else if (gridByte == SQ_REV_6) {
+                        sb.append("6");
+                    }
+                    else if (gridByte == SQ_REV_7) {
+                        sb.append("7");
+                    }
+                    else if (gridByte == SQ_REV_8) {
+                        sb.append("8");
+                    }
+                }
+                else if (SQ_HID_0 <= gridByte && gridByte <= SQ_HID_8) {
+                    sb.append("#");
+                }
+                else {
+                    throw new Exception("Unhandled grid byte, "+gridByte);
+                }
+            }
+            sb.append(".").append(s);
+
+            lines[s] = sb.toString();
+        }
+
+        lines[height] = ".........";
+        lines[height+1] = "abcdefghi";
+        lines[height+2] = "";
+        lines[height+3] = new String(message); message = "";
+
+        return lines;
     }
 
     void go() throws Exception {
@@ -228,12 +302,12 @@ class Game {
             }
         }
 
+        // Turn loop
         String message = "";
-
         boolean b_explosion = false;
-
         while (1==1) {
-            if (this.gameState == GS_DONE) {
+            // Game-over handling
+            if (this.gameState == GS_GAME_OVER) {
                 String[] lines = new String[height+2];
 
                 // Convert all non-visible states into visible states.
@@ -282,82 +356,13 @@ class Game {
                     }
                 }
 
-                // Now we fall through from GS_DONE logic to the usual display
-                // loop, which will display the revealed map.
-            }
-
-            // Render the map, legend and message fields to a StringBuilder.
-            String[] lines = new String[height+4];
-            for (int s=0; s<height; s++) {
-                StringBuilder sb = new StringBuilder();
-                for (int e=0; e<width; e++) {
-                    byte gridByte = grid[s][e];
-                    if (gridByte == SQ_BOMB_LIVE) {
-                        sb.append("#");
-                    }
-                    else if (gridByte == SQ_BOMB_EXPLODED) {
-                        sb.append("!");
-                    }
-                    else if (gridByte == SQ_BOMB_MARKED) {
-                        sb.append("-");
-                    }
-                    else if (gridByte == SQ_QMARK) {
-                        sb.append("?");
-                    }
-                    else if (gridByte == SQ_BOMB_DEFUSED) {
-                        sb.append("d");
-                    }
-                    else if (SQ_BAD_0 <= gridByte && gridByte <= SQ_BAD_8) {
-                        sb.append("-");
-                    }
-                    else if (SQ_REV_0 <= gridByte && gridByte <= SQ_REV_8) {
-                        if (gridByte == SQ_REV_0) {
-                            sb.append(" ");
-                        }
-                        else if (gridByte == SQ_REV_1) {
-                            sb.append("1");
-                        }
-                        else if (gridByte == SQ_REV_2) {
-                            sb.append("2");
-                        }
-                        else if (gridByte == SQ_REV_3) {
-                            sb.append("3");
-                        }
-                        else if (gridByte == SQ_REV_4) {
-                            sb.append("4");
-                        }
-                        else if (gridByte == SQ_REV_5) {
-                            sb.append("5");
-                        }
-                        else if (gridByte == SQ_REV_6) {
-                            sb.append("6");
-                        }
-                        else if (gridByte == SQ_REV_7) {
-                            sb.append("7");
-                        }
-                        else if (gridByte == SQ_REV_8) {
-                            sb.append("8");
-                        }
-                    }
-                    else if (SQ_HID_0 <= gridByte && gridByte <= SQ_HID_8) {
-                        sb.append("#");
-                    }
-                    else {
-                        throw new Exception("Unhandled grid byte, "+gridByte);
-                    }
-                }
-                sb.append(".").append(s);
-                lines[s] = sb.toString();
-            }
-            lines[height] = ".........";
-            lines[height+1] = "abcdefghi";
-            lines[height+2] = "";
-            lines[height+3] = new String(message); message = "";
-
-            if (gameState == GS_DONE) {
+                String[] lines = renderContextToStringArr(grid, message);
                 Terminal.gameOver(lines, b_explosion);
                 break;
-            }
+            } // end of game-over logic
+
+            // Render the map, legend and message fields to a StringBuilder.
+            String[] lines = renderContextToStringArr(grid, message);
 
             String cmd = Terminal.gameInteraction(lines);
             if (cmd.equals("?")) {
@@ -495,7 +500,7 @@ class Game {
 
                     byte sq = grid[s][e];
                     if (sq == SQ_BOMB_LIVE) {
-                        this.gameState = GS_DONE;
+                        this.gameState = GS_GAME_OVER;
                     }
                     else if (sq == SQ_BOMB_MARKED || sq == SQ_BAD_8 || sq == SQ_BAD_7 || sq == SQ_BAD_6 || sq == SQ_BAD_5 || sq == SQ_BAD_4 || sq == SQ_BAD_3 || sq == SQ_BAD_2 || sq == SQ_BAD_1) {
                         message = "No action taken, square was marked.";
@@ -522,7 +527,7 @@ class Game {
             }
 
             if (marksUsed == bombCount) {
-                this.gameState = GS_DONE;
+                this.gameState = GS_GAME_OVER;
             }
         }
     }
