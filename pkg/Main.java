@@ -308,8 +308,6 @@ class Game {
         while (1==1) {
             // Game-over handling
             if (this.gameState == GS_GAME_OVER) {
-                String[] lines = new String[height+2];
-
                 // Convert all non-visible states into visible states.
                 for (int s=0; s<height; s++) {
                     for (int e=0; e<width; e++) {
