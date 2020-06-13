@@ -190,7 +190,7 @@ class Game {
                     sb.append("?");
                 }
                 else if (gridByte == SQ_BOMB_DEFUSED) {
-                    sb.append("d");
+                    sb.append("_");
                 }
                 else if (SQ_BAD_0 <= gridByte && gridByte <= SQ_BAD_8) {
                     sb.append("-");
